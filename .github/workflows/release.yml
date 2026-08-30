@@ -54,6 +54,12 @@ jobs:
           node-version: '20'
           registry-url: 'https://registry.npmjs.org'
 
+      - name: Setup Bun
+        if: steps.check.outputs.should_release == 'true'
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
       - name: Install dependencies
         if: steps.check.outputs.should_release == 'true'
         run: pnpm install --frozen-lockfile
@@ -65,6 +71,10 @@ jobs:
       - name: Run typecheck
         if: steps.check.outputs.should_release == 'true'
         run: pnpm typecheck
+
+      - name: Build packages
+        if: steps.check.outputs.should_release == 'true'
+        run: pnpm --filter @issu/core --filter issu build
 
       - name: Stamp version into packages
         if: steps.check.outputs.should_release == 'true'

@@ -12,6 +12,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <!-- Stage notes for the next release here. They won't publish until you
      move them under a real `## [x.y.z] - DATE` heading. -->
 
+### Changed
+
+- Build the CLI to a self-contained, Node-runnable bundle (tsup). `npm i -g issu`
+  now works on plain Node with no Bun requirement and zero runtime dependencies.
+- `@issu/core` now ships compiled JS + type declarations (`dist/`) for library
+  consumers, while development still resolves to TypeScript source.
+
 ## [0.1.0] - 2026-08-29
 
 ### Added

@@ -106,6 +106,25 @@ it in the dispatch switch + help text in `index.ts`.
 Run everything from the root: `pnpm test` (Turbo fans out to both packages).
 Per package: `cd packages/core && bun test`.
 
+## Build & distribution
+
+Both packages are **Bun-first in dev, Node-compatible when published**. Dev
+resolves to TypeScript source; `package.json` `publishConfig` swaps the entry
+points to compiled `dist/` at publish time (so `bun run start`/tests need no
+build).
+
+- **tsup** (esbuild) compiles both packages. `pnpm -r build` → `dist/`.
+- **`@issu/core`**: ESM JS + `.d.ts`. `exports` → `src` in dev,
+  `publishConfig.exports` → `dist` on npm.
+- **`issu` CLI**: a **fully self-contained** ESM bundle — `noExternal` inlines
+  `@issu/core` and `gray-matter`, so the published CLI has **zero runtime deps**
+  and runs on any Node. The banner injects a `#!/usr/bin/env node` shebang plus a
+  `createRequire` shim (bundled CJS like gray-matter calls `require('fs')`).
+  `bin` → `src` in dev, `publishConfig.bin` → `dist/index.js` on npm.
+- **Future**: the same `src/` can feed `bun build --compile` to produce native
+  binaries for a `curl | bash` install path (e.g. `issu.app/install`) served from
+  GitHub Releases — additive, not a replacement for the npm bundle.
+
 ## Releasing
 
 `CHANGELOG.md` is the **single source of truth** — no version flags, no
