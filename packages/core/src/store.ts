@@ -25,6 +25,22 @@ import {
 const CONFIG_VERSION = 1;
 const DEFAULT_PREFIX = "ISS";
 
+/**
+ * gray-matter ships an executable `javascript`/`js` engine that `eval`s
+ * frontmatter fenced as `---js`. Since issue files can be hand-edited or synced
+ * from other machines, we override those engines to throw. Parsing falls back to
+ * the default (safe) YAML engine, so no untrusted code ever runs at parse time.
+ */
+const rejectExecutableFrontmatter = () => {
+  throw new Error("issu: JavaScript frontmatter is not allowed");
+};
+const MATTER_OPTIONS = {
+  engines: {
+    javascript: rejectExecutableFrontmatter,
+    js: rejectExecutableFrontmatter,
+  },
+} satisfies matter.GrayMatterOption<string, Record<string, unknown>>;
+
 function nowISO(): string {
   return new Date().toISOString();
 }
@@ -47,7 +63,7 @@ function toFrontmatter(issue: Issue): IssueFrontmatter {
 function serialize(issue: Issue): string {
   const fm = toFrontmatter(issue);
   // gray-matter preserves object key order when dumping YAML.
-  return matter.stringify(issue.description ? `\n${issue.description}\n` : "\n", fm as Record<string, unknown>);
+  return matter.stringify(issue.description ? `\n${issue.description}\n` : "\n", fm as Record<string, unknown>, MATTER_OPTIONS);
 }
 
 function isStatus(v: unknown): v is Status {
@@ -59,7 +75,7 @@ function isPriority(v: unknown): v is Priority {
 }
 
 function deserialize(raw: string, fallbackId: string): Issue {
-  const { data, content } = matter(raw);
+  const { data, content } = matter(raw, MATTER_OPTIONS);
   const d = data as Record<string, unknown>;
   return {
     id: typeof d.id === "string" ? d.id : fallbackId,

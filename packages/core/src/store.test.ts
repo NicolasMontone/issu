@@ -144,6 +144,23 @@ describe("markdown round-trip", () => {
     expect(loaded?.priority).toBe(0);
     expect(loaded?.title).toBe("bad");
   });
+
+  test("rejects executable `---js` frontmatter instead of running it", async () => {
+    await store.init({ prefix: "WEB" });
+    // A malicious/synced file that would run code under gray-matter's default
+    // engines. Our locked engines must throw rather than eval this.
+    let executed = false;
+    (globalThis as Record<string, unknown>).__issu_pwned = () => {
+      executed = true;
+    };
+    await Bun.write(
+      issuePath(dir, "WEB-9"),
+      "---js\nglobalThis.__issu_pwned();\nmodule.exports = { title: 'pwned' };\n---\n\nbody\n",
+    );
+    await expect(store.get("WEB-9")).rejects.toThrow(/JavaScript frontmatter/);
+    expect(executed).toBe(false);
+    delete (globalThis as Record<string, unknown>).__issu_pwned;
+  });
 });
 
 describe("get", () => {
