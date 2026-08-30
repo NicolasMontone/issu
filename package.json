@@ -10,7 +10,9 @@
     "lint": "turbo run lint",
     "typecheck": "turbo run typecheck",
     "test": "turbo run test",
-    "cli": "bun packages/cli/src/index.ts"
+    "cli": "bun packages/cli/src/index.ts",
+    "release:local": "node scripts/release/local.mjs",
+    "release:local:dry": "node scripts/release/local.mjs --dry-run"
   },
   "devDependencies": {
     "turbo": "^2.3.3",
