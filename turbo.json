@@ -13,6 +13,9 @@
     "lint": {},
     "typecheck": {
       "dependsOn": ["^build"]
+    },
+    "test": {
+      "outputs": []
     }
   }
 }

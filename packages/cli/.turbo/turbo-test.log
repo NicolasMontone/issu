@@ -1,0 +1,18 @@
+
+> issu@0.0.0 test /vercel/share/v0-project/packages/cli
+> bun test
+
+bun test v1.3.8 (b64edcb4)
+
+src/cli.test.ts:
+(pass) cli end-to-end > full lifecycle: init → create → ls → transition → view [748.71ms]
+(pass) cli end-to-end > ls --json emits valid JSON [221.91ms]
+(pass) cli end-to-end > priority accepts named values via edit [274.01ms]
+(pass) cli end-to-end > invalid priority exits non-zero with a helpful message [128.23ms]
+(pass) cli end-to-end > operating on an uninitialized store fails helpfully [64.92ms]
+(pass) cli end-to-end > help output lists the primary commands [60.40ms]
+
+ 6 pass
+ 0 fail
+ 25 expect() calls
+Ran 6 tests across 1 file. [1.53s]

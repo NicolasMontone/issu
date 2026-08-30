@@ -1,0 +1,4 @@
+
+> @issu/web@0.0.0 typecheck /vercel/share/v0-project/apps/web
+> tsc --noEmit
+
