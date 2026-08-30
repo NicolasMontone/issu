@@ -10,7 +10,7 @@ CLI Target: node18
 CLI Cleaning output folder
 ESM Build start
 ESM dist/index.js 7.87 KB
-ESM ⚡️ Build success in 21ms
+ESM ⚡️ Build success in 27ms
 DTS Build start
-DTS ⚡️ Build success in 1078ms
+DTS ⚡️ Build success in 1161ms
 DTS dist/index.d.ts 4.76 KB

@@ -5,14 +5,14 @@
 bun test v1.3.8 (b64edcb4)
 
 src/cli.test.ts:
-(pass) cli end-to-end > full lifecycle: init → create → ls → transition → view [541.23ms]
-(pass) cli end-to-end > ls --json emits valid JSON [187.13ms]
-(pass) cli end-to-end > priority accepts named values via edit [251.97ms]
-(pass) cli end-to-end > invalid priority exits non-zero with a helpful message [117.24ms]
-(pass) cli end-to-end > operating on an uninitialized store fails helpfully [56.74ms]
-(pass) cli end-to-end > help output lists the primary commands [55.27ms]
+(pass) cli end-to-end > full lifecycle: init → create → ls → transition → view [609.63ms]
+(pass) cli end-to-end > ls --json emits valid JSON [193.88ms]
+(pass) cli end-to-end > priority accepts named values via edit [276.59ms]
+(pass) cli end-to-end > invalid priority exits non-zero with a helpful message [128.21ms]
+(pass) cli end-to-end > operating on an uninitialized store fails helpfully [61.19ms]
+(pass) cli end-to-end > help output lists the primary commands [58.26ms]
 
  6 pass
  0 fail
  25 expect() calls
-Ran 6 tests across 1 file. [1237.00ms]
+Ran 6 tests across 1 file. [1413.00ms]
