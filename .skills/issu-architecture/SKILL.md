@@ -106,6 +106,17 @@ it in the dispatch switch + help text in `index.ts`.
 Run everything from the root: `pnpm test` (Turbo fans out to both packages).
 Per package: `cd packages/core && bun test`.
 
+## Releasing
+
+`CHANGELOG.md` is the **single source of truth** — no version flags, no
+conventional-commit parsing. `scripts/release/changelog.mjs` parses the top
+`## [x.y.z]` heading (skipping `## [Unreleased]`) and prints its version/notes.
+`.github/workflows/release.yml` runs on push to `main`: if the changelog's top
+version has no matching `v*` git tag, it tests, stamps that version into both
+`package.json`s, publishes `@issu/core` then `issu`, commits the bump, and cuts
+a tag + GitHub Release from the notes. Idempotent — an already-tagged version is
+a no-op. Both packages stay version-locked. Only secret: `NPM_TOKEN`.
+
 ## Not built yet (planned)
 
 - **GitHub sync flag** — the reason for the markdown-first design. Likely a
