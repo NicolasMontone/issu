@@ -72,6 +72,10 @@ jobs:
         if: steps.check.outputs.should_release == 'true'
         run: pnpm typecheck
 
+      - name: Build packages
+        if: steps.check.outputs.should_release == 'true'
+        run: pnpm --filter @issu/core --filter issu build
+
       - name: Stamp version into packages
         if: steps.check.outputs.should_release == 'true'
         run: |

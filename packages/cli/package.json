@@ -2,19 +2,29 @@
   "name": "issu",
   "version": "0.0.0",
   "type": "module",
+  "files": [
+    "dist"
+  ],
   "bin": {
     "issu": "./src/index.ts"
   },
+  "publishConfig": {
+    "access": "public",
+    "bin": {
+      "issu": "./dist/index.js"
+    }
+  },
   "scripts": {
     "start": "bun src/index.ts",
+    "build": "tsup",
     "typecheck": "tsc --noEmit",
     "test": "bun test"
   },
-  "dependencies": {
-    "@issu/core": "workspace:*"
-  },
   "devDependencies": {
+    "@issu/core": "workspace:*",
     "@types/bun": "^1.1.14",
+    "gray-matter": "^4.0.3",
+    "tsup": "^8.3.5",
     "typescript": "5.7.3"
   }
 }

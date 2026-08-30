@@ -1,4 +1,3 @@
-#!/usr/bin/env bun
 import { CliError } from "./args.ts";
 import { createCommand } from "./commands/create.ts";
 import { editCommand } from "./commands/edit.ts";
