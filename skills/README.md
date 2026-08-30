@@ -1,5 +1,7 @@
 # Public skills (user-exposed)
 
+Everything under this directory is public and may be shipped to issu users.
+
 These skills are **shipped with issu and safe to surface to end users**. They document
 *how to use the CLI* — commands, flags, workflows, conventions — from the perspective of
 someone driving `issu`, whether that's a human or an assistant acting on their behalf.

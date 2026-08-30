@@ -13,7 +13,7 @@ the CLI.
 
 ## What does NOT belong here
 
-- How to *use* the CLI → `skills/public/`
+- How to *use* the CLI → `skills/`
 - Anything intended for end users
 
 ## Rule of thumb
