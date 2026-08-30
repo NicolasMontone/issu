@@ -3,8 +3,9 @@ import type { Metadata, Viewport } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'v0 App',
-  description: 'Created with v0',
+  title: 'issu — a local, opinionated task tracker',
+  description:
+    'issu is a local Linear: manage issues as plain markdown files on disk, with an opinionated CLI. Git-syncable by design.',
   generator: 'v0.app',
   icons: {
     icon: [

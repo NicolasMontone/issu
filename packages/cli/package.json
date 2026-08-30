@@ -1,0 +1,19 @@
+{
+  "name": "issu",
+  "version": "0.0.0",
+  "type": "module",
+  "bin": {
+    "issu": "./src/index.ts"
+  },
+  "scripts": {
+    "start": "bun src/index.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@issu/core": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.1.14",
+    "typescript": "5.7.3"
+  }
+}
