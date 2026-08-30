@@ -135,21 +135,19 @@ pnpm typecheck      # type-check every package
 
 ### Releasing
 
-Releases are automated — you never pick a version number. Just write commits
-with [Conventional Commit](https://www.conventionalcommits.org/) prefixes:
+[`CHANGELOG.md`](./CHANGELOG.md) is the source of truth — you never pass a
+version flag or pick patch/minor/major. To ship a release:
 
-| Prefix | Effect |
-| --- | --- |
-| `fix:` | patch bump (`0.0.x`) |
-| `feat:` | minor bump (`0.x.0`) |
-| `feat!:` or `BREAKING CHANGE:` in the body | major bump (`x.0.0`) |
-| `chore:`, `docs:`, `refactor:`, etc. | no release |
+1. Move your staged notes from `## [Unreleased]` into a new dated section at the
+   top of the changelog, e.g. `## [0.2.0] - 2026-09-01`.
+2. Merge that to `main`.
 
-On every push to `main`, [release-please](https://github.com/googleapis/release-please)
-opens (or updates) a **release PR** that bumps the versions and writes
-`CHANGELOG.md` from those commits. **Merge that PR** and it tags the release and
-publishes `@issu/core` then `issu` to npm automatically. The only required
-secret is `NPM_TOKEN`.
+On every push to `main`, the [release workflow](./.github/workflows/release.yml)
+reads the top version from `CHANGELOG.md`. If that version isn't tagged yet, it
+runs tests + typecheck, stamps the version into both packages, publishes
+`@issu/core` then `issu` to npm, commits the version bump, and creates a matching
+git tag + GitHub Release using the changelog notes. If the version is already
+tagged, it does nothing. The only required secret is `NPM_TOKEN`.
 
 ## Built with v0
 

@@ -1,67 +1,108 @@
 name: Release
 
+# The CHANGELOG.md file is the source of truth. When a push to main contains a
+# top version (e.g. `## [0.2.0]`) that hasn't been tagged/published yet, this
+# workflow stamps that version into the packages and publishes them to npm.
+# No version flags, no commit-prefix conventions — you just edit the changelog.
+
 on:
   push:
     branches:
       - main
+  workflow_dispatch: {}
 
 permissions:
   contents: write
-  pull-requests: write
 
 jobs:
-  # 1) On every push to main, release-please maintains a "release PR" that
-  #    bumps versions + updates CHANGELOG.md based on conventional commits.
-  #    Merging that PR creates the GitHub Release + tag, which flips
-  #    `releases_created` to true and triggers the publish job below.
-  release-please:
-    runs-on: ubuntu-latest
-    outputs:
-      releases_created: ${{ steps.release.outputs.releases_created }}
-    steps:
-      - name: Run release-please
-        id: release
-        uses: googleapis/release-please-action@v4
-        with:
-          config-file: .github/release-please-config.json
-          manifest-file: .github/.release-please-manifest.json
-
-  # 2) Only runs when a release was just created. Publishes core first
-  #    (the CLI depends on it), then the CLI.
-  publish:
-    needs: release-please
-    if: needs.release-please.outputs.releases_created == 'true'
+  release:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Read version from CHANGELOG
+        id: changelog
+        run: |
+          VERSION="$(node scripts/release/changelog.mjs version)"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "Changelog top version: $VERSION"
+
+      - name: Check if already released
+        id: check
+        run: |
+          if git rev-parse "v${{ steps.changelog.outputs.version }}" >/dev/null 2>&1; then
+            echo "should_release=false" >> "$GITHUB_OUTPUT"
+            echo "Tag v${{ steps.changelog.outputs.version }} already exists — nothing to publish."
+          else
+            echo "should_release=true" >> "$GITHUB_OUTPUT"
+            echo "New version detected — will publish."
+          fi
 
       - name: Setup pnpm
+        if: steps.check.outputs.should_release == 'true'
         uses: pnpm/action-setup@v2
         with:
           version: 9.0.0
 
       - name: Setup Node.js
+        if: steps.check.outputs.should_release == 'true'
         uses: actions/setup-node@v4
         with:
           node-version: '20'
           registry-url: 'https://registry.npmjs.org'
 
       - name: Install dependencies
+        if: steps.check.outputs.should_release == 'true'
         run: pnpm install --frozen-lockfile
 
       - name: Run tests
+        if: steps.check.outputs.should_release == 'true'
         run: pnpm test
 
       - name: Run typecheck
+        if: steps.check.outputs.should_release == 'true'
         run: pnpm typecheck
 
+      - name: Stamp version into packages
+        if: steps.check.outputs.should_release == 'true'
+        run: |
+          VERSION="${{ steps.changelog.outputs.version }}"
+          (cd packages/core && npm version "$VERSION" --no-git-tag-version --allow-same-version)
+          (cd packages/cli && npm version "$VERSION" --no-git-tag-version --allow-same-version)
+
       - name: Publish @issu/core to npm
+        if: steps.check.outputs.should_release == 'true'
         run: pnpm --filter @issu/core publish --access public --no-git-checks
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Publish issu CLI to npm
+        if: steps.check.outputs.should_release == 'true'
         run: pnpm --filter issu publish --access public --no-git-checks
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Commit version bump
+        if: steps.check.outputs.should_release == 'true'
+        run: |
+          VERSION="${{ steps.changelog.outputs.version }}"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add packages/core/package.json packages/cli/package.json
+          git commit -m "chore(release): v$VERSION [skip ci]" || echo "No version changes to commit"
+          git push origin HEAD:main
+
+      - name: Create git tag and GitHub Release
+        if: steps.check.outputs.should_release == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          VERSION="${{ steps.changelog.outputs.version }}"
+          node scripts/release/changelog.mjs notes > /tmp/release-notes.md
+          gh release create "v$VERSION" \
+            --title "v$VERSION" \
+            --notes-file /tmp/release-notes.md \
+            --target main
