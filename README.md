@@ -133,6 +133,24 @@ pnpm test           # run the test suite (Bun)
 pnpm typecheck      # type-check every package
 ```
 
+### Releasing
+
+Releases are automated — you never pick a version number. Just write commits
+with [Conventional Commit](https://www.conventionalcommits.org/) prefixes:
+
+| Prefix | Effect |
+| --- | --- |
+| `fix:` | patch bump (`0.0.x`) |
+| `feat:` | minor bump (`0.x.0`) |
+| `feat!:` or `BREAKING CHANGE:` in the body | major bump (`x.0.0`) |
+| `chore:`, `docs:`, `refactor:`, etc. | no release |
+
+On every push to `main`, [release-please](https://github.com/googleapis/release-please)
+opens (or updates) a **release PR** that bumps the versions and writes
+`CHANGELOG.md` from those commits. **Merge that PR** and it tags the release and
+publishes `@issu/core` then `issu` to npm automatically. The only required
+secret is `NPM_TOKEN`.
+
 ## Built with v0
 
 This project was built with [v0](https://v0.app). The repository is linked to a
