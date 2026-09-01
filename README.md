@@ -16,14 +16,6 @@ conflicts are human-readable. A binary SQLite database would need a custom
 serialization and merge layer bolted on top. Text stays the source of truth; if
 query speed ever matters at scale, a throwaway index can be derived from it.
 
-## Install
-
-```bash
-npm install -g issu
-# or
-pnpm add -g issu
-```
-
 ## Quick start
 
 ```bash
